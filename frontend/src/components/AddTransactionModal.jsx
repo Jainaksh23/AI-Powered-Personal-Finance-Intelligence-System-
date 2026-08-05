@@ -14,33 +14,47 @@ export const AddTransactionModal = ({ isOpen, onClose, onRefresh }) => {
   const [device, setDevice] = useState('Primary Phone');
   const [loading, setLoading] = useState(false);
   const [fraudFeedback, setFraudFeedback] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
 
   if (!isOpen) return null;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setFraudFeedback(null);
+    setErrorMsg(null);
+
+    if (!title || !title.trim()) {
+      setErrorMsg("Please enter a title or description.");
+      return;
+    }
+
+    const parsedAmount = parseFloat(amount);
+    if (isNaN(parsedAmount) || parsedAmount <= 0) {
+      setErrorMsg("Please enter a valid positive amount (e.g. 250).");
+      return;
+    }
+
+    setLoading(true);
 
     try {
       if (type === 'income') {
         await transactionAPI.addIncome({
-          title,
-          amount: parseFloat(amount),
+          title: title.trim(),
+          amount: parsedAmount,
           category: category || 'Salary',
-          source: source || 'Main Employer'
+          source: source.trim() || 'Main Employer'
         });
         onRefresh();
         onClose();
       } else {
         const res = await transactionAPI.addExpense({
-          title,
-          amount: parseFloat(amount),
+          title: title.trim(),
+          amount: parsedAmount,
           category,
-          merchant: merchant || 'General Store',
+          merchant: merchant.trim() || 'General Store',
           payment_method: paymentMethod,
-          location,
-          device,
+          location: location.trim() || 'Home City',
+          device: device.trim() || 'Primary Phone',
         });
 
         if (res.data.is_suspicious) {
@@ -57,7 +71,9 @@ export const AddTransactionModal = ({ isOpen, onClose, onRefresh }) => {
       }
     } catch (err) {
       console.error("Error adding transaction", err);
-      alert("Failed to save transaction. Please check inputs.");
+      const detail = err.response?.data?.detail;
+      const message = typeof detail === 'string' ? detail : (err.response?.data?.error || err.message || "Failed to save transaction. Please verify your connection.");
+      setErrorMsg(message);
     } finally {
       setLoading(false);
     }
@@ -76,6 +92,13 @@ export const AddTransactionModal = ({ isOpen, onClose, onRefresh }) => {
             <X size={20} />
           </button>
         </div>
+
+        {errorMsg && (
+          <div style={{ background: 'rgba(239, 68, 68, 0.15)', border: '1px solid rgba(239, 68, 68, 0.3)', color: '#f87171', padding: '12px', borderRadius: '10px', fontSize: '0.85rem', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <ShieldAlert size={18} style={{ flexShrink: 0 }} />
+            <div>{errorMsg}</div>
+          </div>
+        )}
 
         {fraudFeedback && (
           <div style={{ background: 'rgba(244, 63, 94, 0.15)', border: '1px solid rgba(244, 63, 94, 0.3)', color: '#fb7185', padding: '12px', borderRadius: '10px', fontSize: '0.85rem', marginBottom: '16px', display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
