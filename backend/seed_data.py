@@ -11,7 +11,9 @@ def seed_database():
         # Check if demo user exists
         existing_user = db.query(models.User).filter(models.User.email == "demo@pfis.com").first()
         if existing_user:
-            print("Database already seeded with demo user.")
+            existing_user.hashed_password = auth.get_password_hash("password123")
+            db.commit()
+            print("Database already seeded with demo user. Updated password hash.")
             return
 
         # 1. Create Demo User
