@@ -5,11 +5,16 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATABASE_PATH = os.path.join(BASE_DIR, "pfis.db")
-DATABASE_URL = f"sqlite:///{DATABASE_PATH}"
+DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{DATABASE_PATH}")
 
-engine = create_engine(
-    DATABASE_URL, connect_args={"check_same_thread": False}
-)
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+engine_kwargs = {}
+if DATABASE_URL.startswith("sqlite"):
+    engine_kwargs["connect_args"] = {"check_same_thread": False}
+
+engine = create_engine(DATABASE_URL, **engine_kwargs)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
@@ -18,7 +23,7 @@ def auto_migrate_sqlite():
     """
     Ensures missing columns added during model upgrades are automatically migrated into SQLite tables.
     """
-    if not os.path.exists(DATABASE_PATH):
+    if not DATABASE_URL.startswith("sqlite") or not os.path.exists(DATABASE_PATH):
         return
 
     try:

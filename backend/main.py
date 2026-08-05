@@ -1,4 +1,5 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from database import engine, Base
 import models
@@ -24,14 +25,27 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Enable CORS for frontend development
+# Enable CORS for frontend development & production
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "https://ai-powered-personal-finance-intelligence-vrcz.onrender.com"],
+    allow_origins=[
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "https://ai-powered-personal-finance-intelligence-vrcz.onrender.com",
+    ],
+    allow_origin_regex=r"https://.*\.onrender\.com",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    print(f"Global exception caught: {exc}")
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Internal Server Error", "error": str(exc)}
+    )
 
 # Mount API routers
 app.include_router(auth_router.router)
