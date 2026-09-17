@@ -7,7 +7,9 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 import database, models
 
-SECRET_KEY = "pfis_super_secret_key_for_development_ai_finance"
+import os
+
+SECRET_KEY = os.getenv("SECRET_KEY", "pfis_super_secret_key_for_development_ai_finance")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7 # 7 days
 

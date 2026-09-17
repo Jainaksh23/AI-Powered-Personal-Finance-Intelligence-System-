@@ -9,7 +9,65 @@
 
 ---
 
-## Key Features
+## 🎯 What is this project?
+PFIS is a modern, full-stack intelligence platform that goes beyond simple expense logging. It actively monitors your financial behavior, analyzes spending patterns, and uses Machine Learning to give actionable insights, budget alerts, and fraud detection. 
+
+## ❓ Why did we build it?
+Traditional budgeting apps only look at the **past**—they tell you where your money *went*. PFIS looks at the **present and future**. By integrating AI, we can:
+- Stop you *before* you overspend by forecasting end-of-month expenses.
+- Detect unusual transactions (fraud/anomalies) in real-time.
+- Remove manual data entry via Voice Assistants and SMS Auto-detection.
+
+## ⚙️ How does it work?
+The system utilizes a modern decouple architecture:
+- **Frontend (React + Vite)**: A dynamic, highly responsive dashboard with real-time charts (Chart.js) and alerts.
+- **Backend (FastAPI)**: A high-performance Python backend handling REST API requests, database ORM operations, and authentication.
+- **AI/ML Engine**: Scikit-Learn models trained on synthetic transaction data are loaded into memory for real-time anomaly scoring (Isolation Forest) and forecasting (Random Forest).
+
+---
+
+## 🏗️ System Architecture & Flowchart
+
+```mermaid
+graph TD
+    User([User / Client])
+    
+    subgraph Frontend [Vite + React.js SPA]
+        UI[Dashboard UI]
+        API_Call[Axios API Client]
+        Auth_State[JWT Auth State]
+        UI <--> API_Call
+        UI <--> Auth_State
+    end
+
+    subgraph Backend [FastAPI Server]
+        Router[API Routers]
+        Auth_Middleware[Security & JWT]
+        DB_ORM[SQLAlchemy ORM]
+        
+        subgraph ML_Engine [Machine Learning Module]
+            Anomaly[Anomaly Detection <br/> Isolation Forest]
+            Forecast[Expense Forecaster <br/> Random Forest]
+            NLP[Voice/SMS NLP Parser]
+        end
+        
+        Router <--> Auth_Middleware
+        Router <--> DB_ORM
+        Router <--> ML_Engine
+    end
+
+    subgraph Database [Storage Layer]
+        SQLite[(SQLite / PostgreSQL)]
+    end
+
+    User <-->|HTTPS| UI
+    API_Call <-->|REST API| Router
+    DB_ORM <-->|Read/Write| SQLite
+```
+
+---
+
+## 🚀 Key Features
 
 1. **AI Expense Forecasting (ML Module)**:
    - Uses Scikit-Learn & Random Forest Regressors to predict category-wise next month expenses.
@@ -31,22 +89,23 @@
 6. **Financial Reports & PDF Export**:
    - Downloadable print-ready PDF reports containing monthly summaries, category spend distribution, and budget compliance tables.
 
-7. **Full Security & Audit Logging**:
-   - JWT authentication, bcrypt password hashing, input validation, and security audit log tracking.
+7. **Voice Commands & SMS Auto-Detection**:
+   - Add expenses simply by saying "I spent 500 on groceries today".
+   - Automatically parse banking SMS formats.
 
 ---
 
-## Tech Stack
+## 💻 Tech Stack
 
-- **Backend**: FastAPI (Python 3.11), SQLAlchemy ORM, Pydantic v2, Pytest, ReportLab (PDF Generator)
+- **Backend**: FastAPI (Python 3.11), SQLAlchemy ORM, Pydantic v2, Pytest, ReportLab
 - **Database**: SQLite (dev) / PostgreSQL (production-ready)
 - **Frontend**: React, Vite, Tailwind CSS, Lucide Icons, Recharts, Chart.js, Axios
 - **Machine Learning**: Scikit-Learn (RandomForestRegressor, IsolationForest), Pandas, NumPy, XGBoost
-- **DevOps**: Docker, Docker Compose, Nginx Reverse Proxy
+- **Deployment**: Vercel (Frontend), Render (Backend), Docker Compose
 
 ---
 
-## Quick Start Guide
+## 🛠️ Quick Start Guide
 
 ### 1. Local Development Setup
 
@@ -56,10 +115,13 @@ cd backend
 python -m venv venv
 # On Windows:
 venv\Scripts\activate
+# On Mac/Linux:
+source venv/bin/activate
+
 pip install -r requirements.txt
 uvicorn main:app --reload --port 8000
 ```
-API Documentation (Swagger UI) available at: `http://localhost:8000/docs`
+*API Documentation (Swagger UI) available at: `http://localhost:8000/docs`*
 
 #### Frontend:
 ```bash
@@ -67,28 +129,17 @@ cd frontend
 npm install
 npm run dev
 ```
-Web Application UI available at: `http://localhost:5173`
+*Web Application UI available at: `http://localhost:5173`*
 
 ---
 
-### 2. Docker Deployment
+## ☁️ Deployment Ready
 
-Launch PostgreSQL, FastAPI backend, and Nginx frontend in containerized environment:
-```bash
-docker-compose up --build -d
-```
-
----
-
-## System Documentation
-
-Detailed technical architecture, database ER diagrams, API specs, and deployment guides can be found in the `docs/` directory:
-- [System Architecture](docs/SYSTEM_ARCHITECTURE.md)
-- [Database Documentation](docs/DATABASE_DOCUMENTATION.md)
-- [API Documentation](docs/API_DOCUMENTATION.md)
-- [Deployment Guide](docs/DEPLOYMENT_GUIDE.md)
+This repository is pre-configured for modern PaaS deployment:
+- **Render (`render.yaml`)**: Connect your GitHub to Render.com and deploy the backend instantly. 
+- **Vercel (`vercel.json`)**: Import the `frontend` folder to Vercel for seamless SPA deployment. (Set `VITE_API_URL` to your Render backend URL).
 
 ---
 
-## License & Credits
+## 📄 License & Credits
 Developed as an industry-grade graduation project for AI-Driven Personal Finance Intelligence.

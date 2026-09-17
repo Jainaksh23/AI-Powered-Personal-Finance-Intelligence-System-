@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -19,10 +20,16 @@ from seed_data import seed_database
 # Create database tables
 Base.metadata.create_all(bind=engine)
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    seed_database()
+    yield
+
 app = FastAPI(
     title="Personal Finance Intelligence System (PFIS) API",
     description="Production-Ready AI-Powered Financial Intelligence Platform delivering AI Voice Copilot Assistant, Smart Auto Expense Detection, Expense Prediction, Fraud Defense, Budgeting, and Reports.",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan
 )
 
 # Enable CORS for frontend development & production
@@ -30,10 +37,11 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
+        "http://localhost:5174",
         "http://localhost:3000",
         "https://ai-powered-personal-finance-intelligence-vrcz.onrender.com",
     ],
-    allow_origin_regex=r"https://.*\.onrender\.com",
+    allow_origin_regex=r"https://.*\.(onrender\.com|vercel\.app)",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -58,9 +66,7 @@ app.include_router(ai_router.router)
 app.include_router(reports_router.router)
 app.include_router(user_router.router)
 
-@app.on_event("startup")
-def startup_event():
-    seed_database()
+
 
 @app.get("/")
 def root():
