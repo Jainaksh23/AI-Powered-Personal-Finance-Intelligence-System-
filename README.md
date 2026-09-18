@@ -1,5 +1,7 @@
 # AI-Powered Personal Finance Intelligence System (PFIS)
 
+**🟢 Live Demo:** [View Application](https://ai-powered-personal-finance-intelligence-system-6zaz4oc78.vercel.app/)
+
 [![Python](https://img.shields.io/badge/Backend-FastAPI-009688.svg)](https://fastapi.tiangolo.com/)
 [![React](https://img.shields.io/badge/Frontend-React%20%2B%20Vite-61DAFB.svg)](https://reactjs.org/)
 [![Machine Learning](https://img.shields.io/badge/ML-Scikit--Learn%20%2B%20IsolationForest-F7931E.svg)](https://scikit-learn.org/)
