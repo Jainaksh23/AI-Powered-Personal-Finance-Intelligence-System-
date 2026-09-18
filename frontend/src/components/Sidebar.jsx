@@ -1,7 +1,7 @@
 import React from 'react';
 import { LayoutDashboard, ArrowDownRight, ArrowUpRight, PieChart, Sparkles, FileText, User, Smartphone } from 'lucide-react';
 
-export const Sidebar = ({ activeTab, setActiveTab, fraudCount, pendingAutoCount }) => {
+export const Sidebar = ({ activeTab, setActiveTab, fraudCount, pendingAutoCount, isOpen }) => {
   const navItems = [
     { id: 'dashboard', label: 'Smart Dashboard', icon: LayoutDashboard },
     { id: 'auto-detection', label: 'Smart Auto Detection', icon: Smartphone, badge: 'Auto', count: pendingAutoCount },
@@ -14,7 +14,7 @@ export const Sidebar = ({ activeTab, setActiveTab, fraudCount, pendingAutoCount 
   ];
 
   return (
-    <aside className="glass-card" style={{ width: '260px', borderRadius: 0, borderTop: 'none', borderBottom: 'none', borderLeft: 'none', padding: '24px 16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+    <aside className={`glass-card sidebar ${isOpen ? 'open' : ''}`}>
       <div style={{ fontSize: '0.75rem', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.1em', padding: '0 12px 12px 12px' }}>
         Intelligence Navigation
       </div>

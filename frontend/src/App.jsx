@@ -26,6 +26,7 @@ function MainApp() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState(null); // null = Landing, 'login', 'register'
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   const [expenses, setExpenses] = useState([]);
   const [incomes, setIncomes] = useState([]);
@@ -99,11 +100,21 @@ function MainApp() {
 
   return (
     <div className="app-container">
+      {/* Mobile Sidebar Overlay */}
+      <div 
+        className={`sidebar-overlay ${isMobileSidebarOpen ? 'open' : ''}`}
+        onClick={() => setIsMobileSidebarOpen(false)}
+      ></div>
+
       <Sidebar 
         activeTab={activeTab} 
-        setActiveTab={setActiveTab} 
+        setActiveTab={(tab) => {
+          setActiveTab(tab);
+          setIsMobileSidebarOpen(false); // Close sidebar on mobile after clicking
+        }} 
         fraudCount={activeFraudCount}
         pendingAutoCount={pendingAutoCount}
+        isOpen={isMobileSidebarOpen}
       />
 
       <div className="main-content">
@@ -111,6 +122,7 @@ function MainApp() {
           onOpenTransactionModal={() => setIsModalOpen(true)} 
           onOpenVoiceModal={() => setIsVoiceModalOpen(true)}
           activeAlertsCount={activeFraudCount} 
+          toggleSidebar={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
         />
 
         {dataLoading && !analytics ? (

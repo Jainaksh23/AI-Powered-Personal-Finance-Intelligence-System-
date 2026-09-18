@@ -185,7 +185,7 @@ export const Dashboard = ({ analytics, predictions, fraudAlerts, recommendations
       </div>
 
       {/* Analytics Charts Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '20px' }}>
+      <div className="dashboard-grid grid-cols-2">
         {/* Category Breakdown Doughnut */}
         <div className="glass-card" style={{ padding: '20px', display: 'flex', flexDirection: 'column' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
@@ -218,7 +218,7 @@ export const Dashboard = ({ analytics, predictions, fraudAlerts, recommendations
       </div>
 
       {/* Top Merchants & Quick AI Advice */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: '20px' }}>
+      <div className="dashboard-grid grid-cols-2-alt">
         {/* Top Merchants Card */}
         <div className="glass-card" style={{ padding: '20px' }}>
           <h3 style={{ fontSize: '1.05rem', fontWeight: '700', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
